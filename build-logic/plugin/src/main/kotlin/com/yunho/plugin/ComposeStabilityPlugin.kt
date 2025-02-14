@@ -2,6 +2,7 @@ package com.yunho.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 class ComposeStabilityPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -14,16 +15,14 @@ class ComposeStabilityPlugin : Plugin<Project> {
             }
 
             allprojects {
-                tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile::class.java)
+                tasks.withType(KotlinCompilationTask::class.java)
                     .configureEach {
-                        kotlinOptions {
-                            freeCompilerArgs += listOf(
-                                "-P",
-                                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" + rootProject.buildDir.absolutePath + "/compose_metrics/"
-                            )
-                            freeCompilerArgs += listOf(
-                                "-P",
-                                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" + rootProject.buildDir.absolutePath + "/compose_metrics/"
+                        compilerOptions {
+                            freeCompilerArgs.addAll(
+                                "-P", "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
+                                        rootProject.layout.buildDirectory.get().asFile.absolutePath + "/compose_metrics/",
+                                "-P", "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
+                                        rootProject.layout.buildDirectory.get().asFile.absolutePath + "/compose_metrics/"
                             )
                         }
                     }
