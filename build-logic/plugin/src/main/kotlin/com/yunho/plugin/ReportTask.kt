@@ -25,7 +25,7 @@ internal abstract class ReportTask : DefaultTask() {
 
         txtFiles.filter { it.name.contains("classes") }.forEach { file ->
             val classData = file.readText()
-            val htmlContent = generateHtml(classData)
+            val htmlContent = generateHtml(file.name, classData)
             val htmlFile = File(metricsDir, "${file.nameWithoutExtension}.html")
             htmlFile.writeText(htmlContent)
             println("Generated: ${htmlFile.absolutePath}")
