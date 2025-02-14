@@ -21,6 +21,18 @@ class ComposeStabilityPlugin : Plugin<Project> {
                 )
             }
 
+            project.tasks.register(
+                "reportComposeStability",
+                ReportTask::class.java
+            ) {
+                group = "compose"
+                description = "report stability"
+
+                dependsOn(
+                    project.tasks.matching { it.name.startsWith("compile") && it.name.endsWith("DebugKotlin") }
+                )
+            }
+
             allprojects {
                 tasks.withType(KotlinCompilationTask::class.java)
                     .configureEach {

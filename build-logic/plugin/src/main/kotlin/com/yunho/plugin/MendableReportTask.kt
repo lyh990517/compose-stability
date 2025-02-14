@@ -1,5 +1,6 @@
 package com.yunho.plugin
 
+import com.yunho.plugin.HtmlUtil.openBrowserUsingProcessBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import java.io.File
@@ -51,27 +52,6 @@ internal abstract class MendableReportTask : DefaultTask() {
             process.waitFor()
         } catch (e: Exception) {
             println("JAR error: ${e.message}")
-        }
-    }
-
-    private fun openBrowserUsingProcessBuilder(file: File) {
-        try {
-            val os = System.getProperty("os.name").lowercase()
-            val command = when {
-                os.contains("win") -> listOf("cmd", "/c", "start", file.absolutePath)
-                os.contains("mac") -> listOf("open", file.absolutePath)
-                os.contains("nix") || os.contains("nux") -> listOf("xdg-open", file.absolutePath)
-                else -> null
-            }
-
-            command?.let {
-                ProcessBuilder(it)
-                    .redirectOutput(ProcessBuilder.Redirect.INHERIT)
-                    .redirectError(ProcessBuilder.Redirect.INHERIT)
-                    .start()
-            } ?: println("not supported os")
-        } catch (e: Exception) {
-            println("error: ${e.message}")
         }
     }
 
