@@ -4,7 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.net.HttpURLConnection
-import java.net.URL
+import java.net.URI
 
 internal abstract class CheckTask : DefaultTask() {
 
@@ -12,20 +12,18 @@ internal abstract class CheckTask : DefaultTask() {
     fun check() {
         val metricsDir = File(project.rootProject.buildDir, "compose_metrics")
         if (metricsDir.exists()) {
-            println("=== Compose Metrics Files ===")
             execute()
         } else {
-            println("Compose Metrics 디렉터리가 존재하지 않습니다.")
+            println("There is No Compose Metrics")
         }
     }
 
     private fun execute() {
-        val requestUrl =
-            "https://github.com/jayasuryat/mendable/releases/download/v0.7.0/mendable.jar"
 
-        val connection = URL(requestUrl).openConnection() as HttpURLConnection
+        val connection = URI(MENDABLE).toURL().openConnection() as HttpURLConnection
 
-        val metricsDir = File(project.rootProject.buildDir, "compose_metrics")
+        val metricsDir =
+            File(project.rootProject.layout.buildDirectory.get().asFile, "compose_metrics")
 
         val file = File(metricsDir, "mendable.jar")
 
@@ -77,4 +75,8 @@ internal abstract class CheckTask : DefaultTask() {
         }
     }
 
+    companion object {
+        private const val MENDABLE =
+            "https://github.com/jayasuryat/mendable/releases/download/v0.7.0/mendable.jar"
+    }
 }
