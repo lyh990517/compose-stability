@@ -23,7 +23,15 @@ internal abstract class ReportTask : DefaultTask() {
             return
         }
 
+        val mergedFile = File(metricsDir, "merged_classes.txt")
+
         txtFiles.filter { it.name.contains("classes") }.forEach { file ->
+            val classData = file.readText()
+
+            mergedFile.appendText(classData + "\n")
+        }
+
+        mergedFile.let { file ->
             val classData = file.readText()
             val htmlContent = generateHtml(file.name, classData)
             val htmlFile = File(metricsDir, "${file.nameWithoutExtension}.html")
