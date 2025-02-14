@@ -10,16 +10,16 @@ internal abstract class CheckTask : DefaultTask() {
 
     @TaskAction
     fun check() {
-        val metricsDir = File(project.rootProject.buildDir, "compose_metrics")
+        val metricsDir =
+            File(project.rootProject.layout.buildDirectory.get().asFile, "compose_metrics")
         if (metricsDir.exists()) {
-            execute()
+            executeMendable()
         } else {
             println("There is No Compose Metrics")
         }
     }
 
-    private fun execute() {
-
+    private fun executeMendable() {
         val connection = URI(MENDABLE).toURL().openConnection() as HttpURLConnection
 
         val metricsDir =
@@ -50,7 +50,7 @@ internal abstract class CheckTask : DefaultTask() {
 
             process.waitFor()
         } catch (e: Exception) {
-            println("JAR 실행 중 오류 발생: ${e.message}")
+            println("JAR error: ${e.message}")
         }
     }
 
@@ -69,9 +69,9 @@ internal abstract class CheckTask : DefaultTask() {
                     .redirectOutput(ProcessBuilder.Redirect.INHERIT)
                     .redirectError(ProcessBuilder.Redirect.INHERIT)
                     .start()
-            } ?: println("지원되지 않는 OS입니다.")
+            } ?: println("not supported os")
         } catch (e: Exception) {
-            println("브라우저 실행 중 오류 발생: ${e.message}")
+            println("error: ${e.message}")
         }
     }
 
