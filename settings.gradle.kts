@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "compose-stability"
 include(":app")
+include(":compose")
