@@ -4,83 +4,104 @@ import java.io.File
 
 object HtmlUtil {
     fun generateHtml(classData: String): String {
-        val classLines = classData.lines().filter { it.isNotBlank() }
-        val nodes = mutableListOf<String>()
-        val links = mutableListOf<String>()
+        val classBlocks =
+            Regex("(stable|unstable) class .*?\\{.*?\\}", RegexOption.DOT_MATCHES_ALL).findAll(
+                classData
+            ).map { it.value.trim() }.toList()
+        val rows = mutableListOf<String>()
 
-        for (line in classLines) {
-            val match = Regex("(stable|unstable) class (\\w+)").find(line)
-            if (match != null) {
-                val (stability, className) = match.destructured
-                nodes.add("{ id: \"$className\", stability: \"$stability\" }")
-            }
+        for (block in classBlocks) {
+            val lines = block.lines().map { it.trim() }
+
+            val classMatch = Regex("(stable|unstable) class (\\w+)").find(lines[0])
+            val stability = classMatch?.groupValues?.get(1) ?: "Unknown"
+            val className = classMatch?.groupValues?.get(2) ?: "Unknown"
+
+            val runtimeStabilityMatch = Regex("<runtime stability> = (\\w+)").find(block)
+            val runtimeStability = runtimeStabilityMatch?.groupValues?.get(1) ?: "Unknown"
+
+            val stableMembers = lines.drop(1).filter { it.matches(Regex("stable (var|val) .*")) }
+            val unstableMembers =
+                lines.drop(1).filter { it.matches(Regex("unstable (var|val) .*")) }
+
+            val stableMembersHtml =
+                if (stableMembers.isEmpty()) "<tr><td>없음</td></tr>" else stableMembers.joinToString(
+                    "\n"
+                ) { "<tr><td>$it</td></tr>" }
+
+            val unstableMembersHtml =
+                if (unstableMembers.isEmpty()) "<tr><td>없음</td></tr>" else unstableMembers.joinToString(
+                    "\n"
+                ) { "<tr><td>$it</td></tr>" }
+
+            rows.add(
+                """
+            <tr>
+                <td><b>$className</b></td>
+                <td class="$stability">$stability</td>
+                <td>
+                    <b>Stable:</b>
+                    <table border="1">
+                        <thead><tr><th>멤버</th></tr></thead>
+                        <tbody>
+                            $stableMembersHtml
+                        </tbody>
+                    </table>
+                    <b>Unstable:</b>
+                    <table border="1">
+                        <thead><tr><th>멤버</th></tr></thead>
+                        <tbody>
+                            $unstableMembersHtml
+                        </tbody>
+                    </table>
+                </td>
+                <td>$runtimeStability</td>
+            </tr>
+        """.trimIndent()
+            )
         }
 
         return """
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="ko">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Class Stability Graph</title>
-        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <title>Class Stability Report</title>
         <style>
-            .node circle {
-                stroke: #fff;
-                stroke-width: 2px;
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                font-size: 18px;
+                text-align: left;
             }
-            .stable { fill: green; }
-            .unstable { fill: red; }
-            text { font-size: 12px; fill: black; }
+            th, td {
+                padding: 12px;
+                border: 1px solid #ddd;
+            }
+            th {
+                background-color: #f4f4f4;
+            }
+            .stable { background-color: #d4edda; } /* 연한 초록색 */
+            .unstable { background-color: #f8d7da; } /* 연한 빨간색 */
         </style>
     </head>
     <body>
-        <svg width="800" height="600"></svg>
-        <script>
-            const data = {
-                nodes: [${nodes.joinToString(",")}],
-                links: [${links.joinToString(",")}]
-            };
-
-            const width = 800, height = 600;
-            const svg = d3.select("svg");
-            
-            const simulation = d3.forceSimulation(data.nodes)
-                .force("link", d3.forceLink(data.links).id(d => d.id).distance(100))
-                .force("charge", d3.forceManyBody().strength(-200))
-                .force("center", d3.forceCenter(width / 2, height / 2));
-
-            const link = svg.selectAll(".link")
-                .data(data.links)
-                .enter().append("line")
-                .attr("stroke", d => d.stability === "stable" ? "green" : "red")
-                .attr("stroke-width", 2);
-
-            const node = svg.selectAll(".node")
-                .data(data.nodes)
-                .enter().append("g")
-                .attr("class", "node");
-
-            node.append("circle")
-                .attr("r", 20)
-                .attr("class", d => d.stability);
-
-            node.append("text")
-                .attr("dy", 5)
-                .attr("text-anchor", "middle")
-                .text(d => d.id);
-
-            simulation.on("tick", () => {
-                link
-                    .attr("x1", d => d.source.x)
-                    .attr("y1", d => d.source.y)
-                    .attr("x2", d => d.target.x)
-                    .attr("y2", d => d.target.y);
-
-                node
-                    .attr("transform", d => "translate(" + d.x + "," + d.y + ")");
-            });
-        </script>
+        <h2>Class Stability Report</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>클래스</th>
+                    <th>안정성</th>
+                    <th>멤버</th>
+                    <th>런타임 안정성</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rows.joinToString("\n")}
+            </tbody>
+        </table>
     </body>
     </html>
     """.trimIndent()
