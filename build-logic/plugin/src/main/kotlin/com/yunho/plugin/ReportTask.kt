@@ -23,9 +23,17 @@ internal abstract class ReportTask : DefaultTask() {
             return
         }
 
-        val mergedFile = File(metricsDir, "merged_classes.txt")
+        val mergedFile = File(metricsDir, "compose_stability_report.txt")
+
+        if (mergedFile.exists()) {
+            mergedFile.writeText("")
+        } else {
+            mergedFile.createNewFile()
+        }
 
         txtFiles.filter { it.name.contains("classes") }.forEach { file ->
+            mergedFile.appendText("<<<<${file.name}>>>>" + "\n")
+
             val classData = file.readText()
 
             mergedFile.appendText(classData + "\n")
