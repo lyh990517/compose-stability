@@ -36,26 +36,30 @@ object HtmlUtil {
 
             rows.add(
                 """
-            <tr>
+            <tr class="class-row">
                 <td><b>$className</b></td>
-                <td class="$stability">$stability</td>
-                <td>
-                    <b>Stable:</b>
-                    <table border="1">
-                        <thead><tr><th>멤버</th></tr></thead>
-                        <tbody>
-                            $stableMembersHtml
-                        </tbody>
-                    </table>
-                    <b>Unstable:</b>
-                    <table border="1">
-                        <thead><tr><th>멤버</th></tr></thead>
-                        <tbody>
-                            $unstableMembersHtml
-                        </tbody>
-                    </table>
+                <td class="stability $stability">$stability</td>
+                <td class="members">
+                    <div class="members-section">
+                        <b>Stable:</b>
+                        <table class="stable-table">
+                            <thead><tr><th>멤버</th></tr></thead>
+                            <tbody>
+                                $stableMembersHtml
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="members-section">
+                        <b>Unstable:</b>
+                        <table class="unstable-table">
+                            <thead><tr><th>멤버</th></tr></thead>
+                            <tbody>
+                                $unstableMembersHtml
+                            </tbody>
+                        </table>
+                    </div>
                 </td>
-                <td>$runtimeStability</td>
+                <td class="runtime-stability">$runtimeStability</td>
             </tr>
         """.trimIndent()
             )
@@ -69,22 +73,105 @@ object HtmlUtil {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Class Stability Report</title>
         <style>
+            body {
+                font-family: 'Arial', sans-serif;
+                background-color: #f4f4f4;
+                color: #333;
+                margin: 20px;
+                padding: 20px;
+            }
+
+            h2 {
+                text-align: center;
+                color: #4CAF50;
+                margin-bottom: 40px;
+                font-size: 36px;
+            }
+
             table {
                 width: 100%;
                 border-collapse: collapse;
                 margin: 20px 0;
-                font-size: 18px;
+                font-size: 16px;
                 text-align: left;
+                border-radius: 10px;
+                overflow: hidden;
             }
+
             th, td {
-                padding: 12px;
+                padding: 16px;
                 border: 1px solid #ddd;
+                text-align: center;
+                vertical-align: middle;
             }
+
             th {
-                background-color: #f4f4f4;
+                background-color: #333;
+                color: #fff;
+                font-size: 18px;
             }
-            .stable { background-color: #d4edda; } /* 연한 초록색 */
-            .unstable { background-color: #f8d7da; } /* 연한 빨간색 */
+
+            td {
+                background-color: #fff;
+            }
+
+            .class-row {
+                transition: background-color 0.3s;
+            }
+
+            .class-row:hover {
+                background-color: #f1f1f1;
+            }
+
+            .stability.stable {
+                background-color: #d4edda;
+                color: #155724;
+            }
+
+            .stability.unstable {
+                background-color: #f8d7da;
+                color: #721c24;
+            }
+
+            .members-section {
+                margin-bottom: 20px;
+            }
+
+            .members-section b {
+                font-size: 18px;
+                display: block;
+                margin-bottom: 8px;
+                color: #333;
+            }
+
+            .stable-table, .unstable-table {
+                width: 100%;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+
+            .stable-table th, .unstable-table th {
+                background-color: #d4edda;
+                font-size: 16px;
+            }
+
+            .stable-table tbody, .unstable-table tbody {
+                background-color: #f9f9f9;
+            }
+
+            .runtime-stability {
+                font-weight: bold;
+                font-size: 18px;
+            }
+
+            /* Scrollable Table for members */
+            .stable-table tbody, .unstable-table tbody {
+                max-height: 200px;
+                overflow-y: auto;
+                display: block;
+            }
+
         </style>
     </head>
     <body>
