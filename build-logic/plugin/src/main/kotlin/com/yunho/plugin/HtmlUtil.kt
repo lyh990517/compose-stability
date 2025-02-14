@@ -6,7 +6,8 @@ object HtmlUtil {
     fun generateHtml(title: String, classData: String): String {
         val sections = classData.split(Regex("<<<<(.*?)>>>>"))
         val matches =
-            Regex("<<<<(.*?)>>>>").findAll(classData).map { it.groupValues[1] }.toList()
+            Regex("<<<<(.*?)>>>>").findAll(classData).map { it.groupValues[1].split("_").first() }
+                .toList()
         println(matches)
         val rows = mutableListOf<String>()
 
