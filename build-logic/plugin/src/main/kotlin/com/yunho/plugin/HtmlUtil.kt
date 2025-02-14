@@ -25,173 +25,160 @@ object HtmlUtil {
                 lines.drop(1).filter { it.matches(Regex("unstable (var|val) .*")) }
 
             val stableMembersHtml =
-                if (stableMembers.isEmpty()) "<tr><td>없음</td></tr>" else stableMembers.joinToString(
+                if (stableMembers.isEmpty()) "<p>없음</p>" else stableMembers.joinToString(
                     "\n"
-                ) { "<tr><td>$it</td></tr>" }
+                ) { "<p>$it</p>" }
 
             val unstableMembersHtml =
-                if (unstableMembers.isEmpty()) "<tr><td>없음</td></tr>" else unstableMembers.joinToString(
+                if (unstableMembers.isEmpty()) "<p>없음</p>" else unstableMembers.joinToString(
                     "\n"
-                ) { "<tr><td>$it</td></tr>" }
+                ) { "<p>$it</p>" }
 
             rows.add(
                 """
-            <tr class="class-row">
-                <td><b>$className</b></td>
-                <td class="stability $stability">$stability</td>
-                <td class="members">
-                    <div class="members-section">
-                        <b>Stable:</b>
-                        <table class="stable-table">
-                            <thead><tr><th>멤버</th></tr></thead>
-                            <tbody>
-                                $stableMembersHtml
-                            </tbody>
-                        </table>
+        <tr class="class-row">
+            <td><b>$className</b></td>
+            <td class="stability $stability">$stability</td>
+            <td class="members">
+                <div class="members-section">
+                    <b>Stable</b>
+                    <div class="stable-column">
+                        $stableMembersHtml
                     </div>
-                    <div class="members-section">
-                        <b>Unstable:</b>
-                        <table class="unstable-table">
-                            <thead><tr><th>멤버</th></tr></thead>
-                            <tbody>
-                                $unstableMembersHtml
-                            </tbody>
-                        </table>
+                </div>
+                <div class="members-section">
+                    <b>Unstable</b>
+                    <div class="unstable-column">
+                        $unstableMembersHtml
                     </div>
-                </td>
-                <td class="runtime-stability">$runtimeStability</td>
-            </tr>
-        """.trimIndent()
+                </div>
+            </td>
+            <td class="runtime-stability">$runtimeStability</td>
+        </tr>
+    """.trimIndent()
             )
         }
 
         return """
-    <!DOCTYPE html>
-    <html lang="ko">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Class Stability Report</title>
-        <style>
-            body {
-                font-family: 'Arial', sans-serif;
-                background-color: #f4f4f4;
-                color: #333;
-                margin: 20px;
-                padding: 20px;
-            }
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Stability Report</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 20px;
+            padding: 20px;
+        }
 
-            h2 {
-                text-align: center;
-                color: #4CAF50;
-                margin-bottom: 40px;
-                font-size: 36px;
-            }
+        h2 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 40px;
+            font-size: 36px;
+        }
 
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin: 20px 0;
-                font-size: 16px;
-                text-align: left;
-                border-radius: 10px;
-                overflow: hidden;
-            }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 16px;
+            text-align: left;
+            border-radius: 10px;
+            overflow: hidden;
+        }
 
-            th, td {
-                padding: 16px;
-                border: 1px solid #ddd;
-                text-align: center;
-                vertical-align: middle;
-            }
+        th, td {
+            padding: 16px;
+            border: 1px solid #ddd;
+            text-align: center;
+            vertical-align: middle;
+        }
 
-            th {
-                background-color: #333;
-                color: #fff;
-                font-size: 18px;
-            }
+        th {
+            background-color: #333;
+            color: #fff;
+            font-size: 18px;
+        }
 
-            td {
-                background-color: #fff;
-            }
+        td {
+            background-color: #fff;
+        }
 
-            .class-row {
-                transition: background-color 0.3s;
-            }
+        .class-row {
+            transition: background-color 0.3s;
+        }
 
-            .class-row:hover {
-                background-color: #f1f1f1;
-            }
+        .class-row:hover {
+            background-color: #f1f1f1;
+        }
 
-            .stability.stable {
-                background-color: #d4edda;
-                color: #155724;
-            }
+        .stability.stable {
+            background-color: #d4edda;
+            color: #155724;
+        }
 
-            .stability.unstable {
-                background-color: #f8d7da;
-                color: #721c24;
-            }
+        .stability.unstable {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
 
-            .members-section {
-                margin-bottom: 20px;
-            }
+        .members-section {
+            margin-bottom: 20px;
+            text-align: start; /* Align labels to the start */
+        }
 
-            .members-section b {
-                font-size: 18px;
-                display: block;
-                margin-bottom: 8px;
-                color: #333;
-            }
+        .members-section b {
+            font-size: 18px;
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            text-align: start; /* Align labels to the start */
+        }
 
-            .stable-table, .unstable-table {
-                width: 100%;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                margin-bottom: 10px;
-            }
+        .stable-column, .unstable-column {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            padding: 8px;
+            background-color: #f9f9f9;
+            text-align: start; /* Align to start */
+        }
 
-            .stable-table th, .unstable-table th {
-                background-color: #d4edda;
-                font-size: 16px;
-            }
+        .stable-column p, .unstable-column p {
+            margin: 4px 0;
+        }
 
-            .stable-table tbody, .unstable-table tbody {
-                background-color: #f9f9f9;
-            }
+        .runtime-stability {
+            font-weight: bold;
+            font-size: 18px;
+        }
 
-            .runtime-stability {
-                font-weight: bold;
-                font-size: 18px;
-            }
-
-            /* Scrollable Table for members */
-            .stable-table tbody, .unstable-table tbody {
-                max-height: 200px;
-                overflow-y: auto;
-                display: block;
-            }
-
-        </style>
-    </head>
-    <body>
-        <h2>Class Stability Report</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>클래스</th>
-                    <th>안정성</th>
-                    <th>멤버</th>
-                    <th>런타임 안정성</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${rows.joinToString("\n")}
-            </tbody>
-        </table>
-    </body>
-    </html>
-    """.trimIndent()
+    </style>
+</head>
+<body>
+    <h2>Class Stability Report</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>클래스</th>
+                <th>안정성</th>
+                <th>멤버</th>
+                <th>런타임 안정성</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${rows.joinToString("\n")}
+        </tbody>
+    </table>
+</body>
+</html>
+""".trimIndent()
     }
 
     fun openBrowserUsingProcessBuilder(file: File) {

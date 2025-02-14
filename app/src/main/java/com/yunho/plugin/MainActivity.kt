@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
             PluginTheme {
                 Column {
                     ComposableFromAppModule(
-                        testA = TestA(1),
+                        testA = TestA(1, 2, 3, 4),
                         testB = TestB(2),
                         testC = TestC(listOf(3))
                     )
@@ -40,7 +40,10 @@ class MainActivity : ComponentActivity() {
 }
 
 data class TestA(
-    var data: Int
+    var data: Int,
+    val data1: Int,
+    val data2: Int,
+    val data3: Int
 )
 
 data class TestB(
