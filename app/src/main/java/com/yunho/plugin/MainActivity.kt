@@ -19,29 +19,27 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PluginTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                Hello(
+                    testA = TestA(1),
+                    testB = TestB(2)
+                )
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+data class TestA(
+    var data: Int
+)
 
-@Preview(showBackground = true)
+data class TestB(
+    val data: Int
+)
+
 @Composable
-fun GreetingPreview() {
-    PluginTheme {
-        Greeting("Android")
-    }
+fun Hello(
+    testA: TestA,
+    testB: TestB
+) {
+    Text("${testA.data} ${testB.data}")
 }
