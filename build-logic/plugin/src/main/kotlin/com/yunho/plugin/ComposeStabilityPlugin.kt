@@ -7,7 +7,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 class ComposeStabilityPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            project.tasks.register("reportComposeStabilityWithMendable", MendableReportTask::class.java) {
+            pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
+
+            project.tasks.register(
+                "reportComposeStabilityWithMendable",
+                MendableReportTask::class.java
+            ) {
                 group = "compose"
                 description = "report stability"
 
@@ -19,9 +24,11 @@ class ComposeStabilityPlugin : Plugin<Project> {
                     .configureEach {
                         compilerOptions {
                             freeCompilerArgs.addAll(
-                                "-P", "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
+                                "-P",
+                                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
                                         rootProject.layout.buildDirectory.get().asFile.absolutePath + "/compose_metrics/",
-                                "-P", "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
+                                "-P",
+                                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
                                         rootProject.layout.buildDirectory.get().asFile.absolutePath + "/compose_metrics/"
                             )
                         }
