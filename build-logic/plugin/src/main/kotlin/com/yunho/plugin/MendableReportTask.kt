@@ -6,7 +6,7 @@ import java.io.File
 import java.net.HttpURLConnection
 import java.net.URI
 
-internal abstract class CheckTask : DefaultTask() {
+internal abstract class MendableReportTask : DefaultTask() {
 
     @TaskAction
     fun check() {

@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 class ComposeStabilityPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            project.tasks.register("reportComposeStability", CheckTask::class.java) {
+            project.tasks.register("reportComposeStabilityWithMendable", MendableReportTask::class.java) {
                 group = "compose"
                 description = "report stability"
 
