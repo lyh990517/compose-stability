@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "plugin"
+rootProject.name = "compose-stability"
 include(":app")

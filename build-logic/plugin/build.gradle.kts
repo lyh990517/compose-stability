@@ -11,3 +11,12 @@ dependencies {
     compileOnly(libs.android.tools.build.gradle)
     compileOnly(libs.kotlin.gradle.plugin)
 }
+
+gradlePlugin {
+    plugins {
+        register("stability") {
+            id = "compose.stability"
+            implementationClass = "com.yunho.plugin.ComposeStabilityPlugin"
+        }
+    }
+}
