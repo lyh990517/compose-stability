@@ -21,7 +21,8 @@ class MainActivity : ComponentActivity() {
             PluginTheme {
                 Hello(
                     testA = TestA(1),
-                    testB = TestB(2)
+                    testB = TestB(2),
+                    testC = TestC(listOf(3))
                 )
             }
         }
@@ -36,10 +37,15 @@ data class TestB(
     val data: Int
 )
 
+data class TestC(
+    val data: List<Int>
+)
+
 @Composable
 fun Hello(
     testA: TestA,
-    testB: TestB
+    testB: TestB,
+    testC: TestC
 ) {
-    Text("${testA.data} ${testB.data}")
+    Text("${testA.data} ${testB.data} ${testC.data.first()}")
 }

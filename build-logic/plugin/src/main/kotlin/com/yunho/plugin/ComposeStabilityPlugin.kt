@@ -6,17 +6,11 @@ import org.gradle.api.Project
 class ComposeStabilityPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
+            project.tasks.register("reportComposeStability", CheckTask::class.java) {
+                group = "compose"
+                description = "report stability"
 
-            val printComposeMetrics =
-                project.tasks.register("printComposeMetrics", CheckTask::class.java) {
-                    group = "compose"
-                    description = "check stability"
-
-                    dependsOn("build")
-                }
-
-            printComposeMetrics.configure {
-                mustRunAfter("build")
+                dependsOn("build")
             }
 
             allprojects {
