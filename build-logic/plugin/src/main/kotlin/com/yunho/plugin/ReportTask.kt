@@ -41,7 +41,7 @@ internal abstract class ReportTask : DefaultTask() {
 
         mergedFile.let { file ->
             val classData = file.readText()
-            val htmlContent = generateHtml(file.name, classData)
+            val htmlContent = generateHtml("Class stability report", classData)
             val htmlFile = File(metricsDir, "${file.nameWithoutExtension}.html")
             htmlFile.writeText(htmlContent)
             println("Generated: ${htmlFile.absolutePath}")
