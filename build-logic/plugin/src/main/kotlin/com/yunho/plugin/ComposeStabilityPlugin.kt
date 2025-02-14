@@ -16,7 +16,9 @@ class ComposeStabilityPlugin : Plugin<Project> {
                 group = "compose"
                 description = "report stability"
 
-                dependsOn("build")
+                dependsOn(
+                    project.tasks.matching { it.name.startsWith("compile") && it.name.endsWith("DebugKotlin") }
+                )
             }
 
             allprojects {
